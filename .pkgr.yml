@@ -4,7 +4,8 @@ targets:
   debian-8:
   ubuntu-12.04:
   ubuntu-14.04:
+  ubuntu-16.04:
   centos-7:
   centos-8:
 before:
-  - cat packaging/shebang bin/pkgr | tee bin/pkgr
+  - cat packaging/shebang bin/pkgr > bin/.pkgr && mv bin/.pkgr bin/pkgr
