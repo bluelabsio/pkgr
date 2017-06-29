@@ -221,6 +221,37 @@ describe "bash cli" do
         expect(process.stdout.split("\n")).to eq(["Procfile", "vendor"])
       end
     end
+
+    describe "configure" do
+      it "properly sets the variables given on stdin" do
+        process.call("configure", input: "K1=V1
+#
+K2=V2")
+        expect(process).to be_ok
+        process.call("config:get K1")
+        expect(process.stdout).to eq("V1")
+        process.call("config:get K2")
+        expect(process.stdout).to eq("V2")
+      end
+
+      it "does nothing by default" do
+        process.call("configure")
+        expect(process.stdout).to eq("")
+      end
+
+      it "calls the configure script if provided" do
+        target_dir = File.join(directory, config.home, "packaging", "scripts")
+        FileUtils.mkdir_p target_dir
+
+        File.open(File.join(target_dir, "configure"), "w+") do |f|
+          f.puts "#!/bin/bash"
+          f.puts "echo $KEY"
+        end
+        FileUtils.chmod 0755, File.join(target_dir, "configure")
+        process.call("configure", input: "KEY=HELLO FROM CONFIGURE")
+        expect(process.stdout).to eq("HELLO FROM CONFIGURE")
+      end
+    end
   end # distribution independent
 
   describe "scale" do

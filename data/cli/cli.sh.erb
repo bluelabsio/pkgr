@@ -269,11 +269,25 @@ scale() {
 }
 
 configure() {
+  set -x
   local installer_dir="$(_p "/usr/share/${APP_NAME}/installer")"
+  local configure_script="$(_p "$APP_HOME/packaging/scripts/configure")"
+
   if [ -d "$installer_dir" ] ; then
+    if [ -t 0 ]; then
+      cat > $(_p "/etc/$APP_NAME/installer.dat")
+    fi
     ${installer_dir}/bin/run $@
   else
-    echo "No installer has been configured for ${APP_NAME}"
+    if [ ! -t 0 ]; then
+      cat | grep -v '^#' | while read -r line ; do
+        config_set "$line"
+      done
+    fi
+    if [ -f "$configure_script" -a -x "$configure_script" ] ; then
+      # TODO: call the run command to get ENV variables loaded
+      exec "$configure_script" "$@"
+    fi
   fi
 }
 
