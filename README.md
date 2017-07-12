@@ -1,3 +1,7 @@
+# Why is this a thing, Bluelabs friends?
+
+We want to build out RPMs sometimes, and this lets us do it. Since we use custom install directories instead of just /opt/app, this inclues https://github.com/crohr/pkgr/pull/72 . When that gets merged we can use the main, but forking for now?  
+
 # pkgr
 
 ## Goal
